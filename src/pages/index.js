@@ -1,12 +1,14 @@
 import React from 'react';
-import { Form } from 'antd';
+import { Form, Button } from 'antd';
 import { getCitys } from '../service/api';
 import styles from './index.less';
-
+import CitySelector from '@/components/CitySelector';
+const FormItem = Form.Item;
 export default () => {
-  // 城市数据可参照下面的API获取
-  getCitys({ province: '四川省' }).then(res => console.log(res));
-  getCitys({ province: '广东省' }).then(res => console.log(res));
+  // // 城市数据可参照下面的API获取
+  // getCitys({ province: '四川省' }).then(res => console.log(res));
+  // getCitys({ province: '广东省' }).then(res => console.log(res));
+  const [form] = Form.useForm();
   const onFinish = values => {
     console.log('Success:', values);
   };
@@ -14,7 +16,16 @@ export default () => {
   const onFinishFailed = errorInfo => {
     console.log('Failed:', errorInfo);
   };
-
+  const onChange = value => {
+    console.log('CitySelector:-----', value);
+  };
+  const validator = (rules, value, callback) => {
+    if (!value) {
+      callback('请选择城市!');
+    } else {
+      callback();
+    }
+  };
   return (
     <div style={{ padding: 100 }}>
       <h1 className={styles.title}>Practice</h1>
@@ -32,8 +43,21 @@ export default () => {
           要求4：CitySelector可以与Form组件一起使用，即组件的值可被Form收集并校验。
         </li>
       </ul>
-      <Form name="practice" onFinish={onFinish} onFinishFailed={onFinishFailed}>
+      <Form
+        form={form}
+        name="practice"
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+      >
         {/* 此处放入CitySelector */}
+        <FormItem name="citySelector" rules={[{ validator }]}>
+          <CitySelector multiple={false} province="四川"></CitySelector>
+        </FormItem>
+        <FormItem>
+          <Button type="primary" htmlType="submit">
+            提交
+          </Button>
+        </FormItem>
       </Form>
     </div>
   );
