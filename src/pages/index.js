@@ -1,10 +1,24 @@
-import React from 'react';
-import { Form, Button } from 'antd';
+import React, { useState } from 'react';
+import { Form, Button, Select, Radio } from 'antd';
 import { getCitys } from '../service/api';
 import styles from './index.less';
 import CitySelector from '@/components/CitySelector';
 const FormItem = Form.Item;
+const { Option } = Select;
+const RadioGroup = Radio.Group;
 export default () => {
+  const province = [
+    {
+      id: 1,
+      name: '四川省',
+    },
+    {
+      id: 2,
+      name: '河北省',
+    },
+  ];
+  const [curProv, setCurProv] = useState();
+  const [mulit, setMulit] = useState(false);
   // // 城市数据可参照下面的API获取
   // getCitys({ province: '四川省' }).then(res => console.log(res));
   // getCitys({ province: '广东省' }).then(res => console.log(res));
@@ -50,13 +64,26 @@ export default () => {
         onFinishFailed={onFinishFailed}
       >
         {/* 此处放入CitySelector */}
+        <FormItem>
+          <Select onChange={tar => setCurProv(tar)}>
+            {province.map(item => (
+              <Option key={item.id} value={item.id}>
+                {item.name}
+              </Option>
+            ))}
+          </Select>
+        </FormItem>
         <FormItem name="citySelector" rules={[{ validator }]}>
-          <CitySelector multiple={false} province="四川"></CitySelector>
+          <CitySelector multiple={mulit} province={curProv}></CitySelector>
         </FormItem>
         <FormItem>
-          <Button type="primary" htmlType="submit">
+          <Button style={{ marginRight: 12 }} type="primary" htmlType="submit">
             提交
           </Button>
+          <RadioGroup value={mulit} onChange={e => setMulit(e.target.value)}>
+            <Radio value={true}>全选</Radio>
+            <Radio value={false}>单选</Radio>
+          </RadioGroup>
         </FormItem>
       </Form>
     </div>
